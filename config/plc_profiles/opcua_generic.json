@@ -1,0 +1,197 @@
+{
+  "Name": "OPC UA - generic",
+  "Protocol": "OpcUa",
+  "WordOrder": "ABCD",
+  "Tags": [
+    {
+      "Signal": "CmdWord",
+      "Address": "ns=3;s=\"DB_Wave\".\"CmdWord\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "HeartbeatPc",
+      "Address": "ns=3;s=\"DB_Wave\".\"HeartbeatPc\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "Period_s",
+      "Address": "ns=3;s=\"DB_Wave\".\"Period_s\"",
+      "DataType": "Float32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "s"
+    },
+    {
+      "Signal": "Ramp_s",
+      "Address": "ns=3;s=\"DB_Wave\".\"Ramp_s\"",
+      "DataType": "Float32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "s"
+    },
+    {
+      "Signal": "Cycles",
+      "Address": "ns=3;s=\"DB_Wave\".\"Cycles\"",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "waves | samples (trajectory mode)"
+    },
+    {
+      "Signal": "Amp_mm",
+      "Address": "ns=3;s=\"DB_Wave\".\"Amp_mm\"",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "mm"
+    },
+    {
+      "Signal": "Phase_deg",
+      "Address": "ns=3;s=\"DB_Wave\".\"Phase_deg\"",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "deg"
+    },
+    {
+      "Signal": "ChunkSeq",
+      "Address": "ns=3;s=\"DB_Wave\".\"ChunkSeq\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkReady",
+      "Address": "ns=3;s=\"DB_Wave\".\"ChunkReady\"",
+      "DataType": "Bool",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkCrc",
+      "Address": "ns=3;s=\"DB_Wave\".\"ChunkCrc\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkAck",
+      "Address": "ns=3;s=\"DB_Wave\".\"ChunkAck\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "BufferLevel",
+      "Address": "ns=3;s=\"DB_Wave\".\"BufferLevel\"",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "free samples"
+    },
+    {
+      "Signal": "Pos_mm",
+      "Address": "ns=3;s=\"DB_Wave\".\"Pos_mm\"",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "mm"
+    },
+    {
+      "Signal": "Probe_m",
+      "Address": "ns=3;s=\"DB_Wave\".\"Probe_m\"",
+      "DataType": "Float32",
+      "Length": 8,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "mA (loop current; calibrated to m in the app)"
+    },
+    {
+      "Signal": "StatusWord",
+      "Address": "ns=3;s=\"DB_Wave\".\"StatusWord\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "FaultWord",
+      "Address": "ns=3;s=\"DB_Wave\".\"FaultWord\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "Heartbeat",
+      "Address": "ns=3;s=\"DB_Wave\".\"Heartbeat\"",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "SampleCounter",
+      "Address": "ns=3;s=\"DB_Wave\".\"SampleCounter\"",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "samples"
+    },
+    {
+      "Signal": "TrajChunk",
+      "Address": "ns=3;s=\"DB_Wave\".\"TrajChunk\"",
+      "DataType": "Float32",
+      "Length": 60,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "mm"
+    }
+  ]
+}

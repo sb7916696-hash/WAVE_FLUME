@@ -1,0 +1,35 @@
+# Build output
+bin/
+obj/
+artifacts/
+*.user
+.vs/
+TestResults/
+
+# Installers, executables and archives are built, not stored (see installer/build-release.ps1)
+*.exe
+*.msi
+*.zip
+*.pdb
+
+# Temporary files made while building the manual and screenshots
+docs/manual_build.html
+docs/manual_preview.html
+docs/screenshots-new/
+
+# Local session notes and tools
+.remember/
+
+# Local credentials and machine data: never commit
+test-mysql.txt
+.local/
+pki/
+Runs/
+logs/
+calibration.json
+settings.json
+recipes.json
+
+# Operating system files
+Thumbs.db
+.DS_Store

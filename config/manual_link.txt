@@ -1,0 +1,4 @@
+# Online copy of the User Manual (PDF), shown as a link in the Help tab.
+# Upload Wave_Flume_User_Manual.pdf to a public place (for example Google Drive, with sharing set to
+# "Anyone with the link"), then paste the link on the line below. Leave it empty to hide the online link.
+https://drive.google.com/file/d/1NcCwFq1KQJsr_jwa9lOMMmnV4jNUaPjD/view?usp=sharing

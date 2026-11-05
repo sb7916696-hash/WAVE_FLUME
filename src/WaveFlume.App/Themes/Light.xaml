@@ -1,0 +1,29 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Light-gray industrial palette. Keys must match Dark.xaml exactly. See docs/UI_STYLE_GUIDE.md. -->
+    <SolidColorBrush x:Key="WindowBg" Color="#DCDCDC"/>
+    <SolidColorBrush x:Key="PanelBg" Color="#EDEDED"/>
+    <SolidColorBrush x:Key="InputBg" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ReadOnlyBg" Color="#E4E4E4"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#9A9A9A"/>
+    <SolidColorBrush x:Key="Text" Color="#1A1A1A"/>
+    <SolidColorBrush x:Key="TextMuted" Color="#505050"/>
+    <SolidColorBrush x:Key="TextDisabled" Color="#8A8A8A"/>
+    <SolidColorBrush x:Key="ButtonBg" Color="#E2E2E2"/>
+    <SolidColorBrush x:Key="ButtonHover" Color="#D2D2D2"/>
+    <SolidColorBrush x:Key="ButtonPressed" Color="#B6B6B6"/>
+    <SolidColorBrush x:Key="Selection" Color="#2F5F8F"/>
+    <SolidColorBrush x:Key="SelectionText" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Alarm" Color="#C00000"/>
+    <SolidColorBrush x:Key="AlarmText" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Warning" Color="#D99A00"/>
+    <SolidColorBrush x:Key="WarningText" Color="#1A1A1A"/>
+    <SolidColorBrush x:Key="Ok" Color="#4C8A4C"/>
+    <SolidColorBrush x:Key="OkText" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="EStopBg" Color="#CC0000"/>
+    <SolidColorBrush x:Key="EStopText" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="GridLine" Color="#C8C8C8"/>
+    <Color x:Key="PlotBgColor">#FFFFFF</Color>
+    <Color x:Key="PlotFgColor">#1A1A1A</Color>
+    <Color x:Key="PlotGridColor">#E0E0E0</Color>
+</ResourceDictionary>

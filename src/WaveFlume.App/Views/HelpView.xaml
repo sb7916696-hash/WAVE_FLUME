@@ -1,0 +1,105 @@
+<UserControl x:Class="WaveFlume.App.Views.HelpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer Margin="8" VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="1000" HorizontalAlignment="Left">
+            <GroupBox Header="About">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Image Source="/Assets/WaveFlume-128.png" Width="48" Height="48" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center" Text="Wave Flume"/>
+                    </StackPanel>
+                    <TextBlock x:Name="VersionText" Style="{StaticResource Muted}" Margin="0,0,0,6"/>
+                    <TextBlock TextWrapping="Wrap">
+                        Control program for a 3.0 m x 45.0 m wave flume with six independent paddles. You describe a wave,
+                        the program works out the paddle motion and checks that it is safe, sends it to the controller,
+                        runs it, and records what the wave probes measure. It makes regular waves (Monochromatic, Bichromatic, Cnoidal),
+                        a single Solitary wave, Focusing wave groups, irregular sea states (Random: Pierson-Moskowitz, Generalised PM,
+                        JONSWAP, TMA or Darbyshire spectrum), and waves or paddle motions you supply in a file.
+                    </TextBlock>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Safety">
+                <TextBlock TextWrapping="Wrap">
+                    This PC supervises the flume but is not a real-time safety system. The hardwired emergency stop is the
+                    main way to stop the paddles; the on-screen EMERGENCY STOP is an additional request. The controller and
+                    drives apply their own stroke, speed and acceleration limits independently of this program.
+                </TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="User Manual - how to run a test">
+                <TextBlock TextWrapping="Wrap" xml:space="preserve">First time only:
+   Settings tab: enter the Max Acceleration of the drive, then press Save Settings. Until this is done no wave can be sent.
+   Anyone using the program can change the settings; there is no login.
+
+Every test:
+   1. Wave Generation tab: choose the Wave Type, fill in the numbers, press Calculate. The Safety Gatekeeper box must not be red.
+   2. (Optional) Type a Test Number and press Save to keep the wave as a recipe.
+   3. Wave Paddle tab: press Connect, Enable Servos, Starting Position, Send to Wave Paddle, then Start Wave, in that order.
+   4. Press Smooth Stop to end the run. Press EMERGENCY STOP in an emergency.
+   5. The data (CSV) and the report (PDF) are saved automatically in the Runs folder.
+
+A button that is greyed out is not allowed yet. Each step unlocks the next.</TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="Wave types">
+                <TextBlock TextWrapping="Wrap" xml:space="preserve">Monochromatic: regular waves of one height and one period. Choose 1st order, or 2nd order for a more accurate wave shape.
+   Inputs: Water Depth, Wave Height, Wave Period, Number of Waves, Ramp Duration, Wave Angle (0 = straight wave).
+
+Random: an irregular sea state. Height is the significant wave height Hs, period is the peak period Tp.
+   Spectral Shape: Generalised PM (set Beta; 1.25 is the standard Pierson-Moskowitz) or JONSWAP (set Gamma; 3.3 is standard).
+   Random Seed: the same seed gives exactly the same sea every time; a different seed gives a different sea.
+   Scale realisation to target Hs: adjusts the random sea so its measured Hs equals the Hs you typed.
+   Use at least 100 waves for statistics that are representative of the sea state.</TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="Wave Paddle buttons">
+                <TextBlock TextWrapping="Wrap" xml:space="preserve">Connect: opens the link to the controller (the same button then reads Disconnect).
+Enable Servos: switches on the servo drives.
+Starting Position: moves the paddles to their starting (zero) position, so that zero on the screen is zero on the machine. Needed once after the servos are switched on.
+Send to Wave Paddle: sends the calculated wave to the controller (the blue bar shows progress).
+Start Wave: starts the wave. Smooth Stop: ends it gently. EMERGENCY STOP: stops at once.
+Reset Fault: clears a fault after the cause has been removed.
+Save Test Data / PDF Report / Open Test Data: keep, report on, or review a recorded run.</TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="If the wave is BLOCKED (red)">
+                <TextBlock TextWrapping="Wrap" xml:space="preserve">The program never sends a wave that would break the limits. Read the red message, then:
+   Wave too high or too steep (breaking)  ->  lower the height, lengthen the period or increase the water depth.
+   Stroke, velocity or acceleration too large  ->  lower the height or lengthen the period.
+   Value outside the allowed range  ->  type a value inside the range shown in the message.
+   Acceleration limit not configured  ->  enter the Max Acceleration of the drive in Settings and press Save Settings.
+The Limit plot on the Wave Generation tab shows the highest wave allowed for every period.</TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="Alarms">
+                <TextBlock TextWrapping="Wrap" xml:space="preserve">An alarm shows as a coloured bar under the title. Press Details to see what the problem is and what to do about it.
+Press Acknowledge in that window once you have read it. All alarms are also listed in the Alarm / event log at the bottom.
+   Yellow = warning (the run can continue).  Red = critical or emergency stop (the paddles have been told to stop).</TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="Where your files are saved">
+                <TextBlock TextWrapping="Wrap" xml:space="preserve">Recipes:  recipes.json in the data folder (Documents\WaveFlume by default; it can be changed in Settings).
+Runs:  the Runs folder inside the data folder. Each run gives a CSV and a PDF report named date_time_TestNumber.
+The date and time in the file name are UTC.
+Settings and program logs:  %LOCALAPPDATA%\WaveFlume.</TextBlock>
+            </GroupBox>
+
+            <GroupBox Header="Full manual">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,6">
+                        The complete User Manual, with pictures and every setting explained, is a PDF.
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="OpenManualButton" Content="Open the User Manual (PDF)" Padding="14,4" Click="OnOpenManual"/>
+                        <TextBlock x:Name="OnlineLinkText" Visibility="Collapsed" VerticalAlignment="Center" Margin="16,0,0,0">
+                            <Hyperlink x:Name="OnlineLink" Click="OnOnlineLink">Download the User Manual online</Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                    <TextBlock x:Name="ManualMissingText" Visibility="Collapsed" Style="{StaticResource Muted}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

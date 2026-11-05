@@ -1,0 +1,197 @@
+{
+  "Name": "Modbus TCP - generic",
+  "Protocol": "ModbusTcp",
+  "WordOrder": "ABCD",
+  "Tags": [
+    {
+      "Signal": "CmdWord",
+      "Address": "HR0",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "HeartbeatPc",
+      "Address": "HR1",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "Period_s",
+      "Address": "HR2",
+      "DataType": "Float32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "s"
+    },
+    {
+      "Signal": "Ramp_s",
+      "Address": "HR4",
+      "DataType": "Float32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "s"
+    },
+    {
+      "Signal": "Cycles",
+      "Address": "HR6",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "waves | samples (trajectory mode)"
+    },
+    {
+      "Signal": "Amp_mm",
+      "Address": "HR8",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "mm"
+    },
+    {
+      "Signal": "Phase_deg",
+      "Address": "HR20",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "deg"
+    },
+    {
+      "Signal": "ChunkSeq",
+      "Address": "HR40",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkReady",
+      "Address": "HR41",
+      "DataType": "Bool",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkCrc",
+      "Address": "HR42",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkAck",
+      "Address": "HR43",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "BufferLevel",
+      "Address": "HR44",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "free samples"
+    },
+    {
+      "Signal": "Pos_mm",
+      "Address": "HR100",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "mm"
+    },
+    {
+      "Signal": "Probe_m",
+      "Address": "HR200",
+      "DataType": "Float32",
+      "Length": 8,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "mA (loop current; calibrated to m in the app)"
+    },
+    {
+      "Signal": "StatusWord",
+      "Address": "HR220",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "FaultWord",
+      "Address": "HR221",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "Heartbeat",
+      "Address": "HR222",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "SampleCounter",
+      "Address": "HR224",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "samples"
+    },
+    {
+      "Signal": "TrajChunk",
+      "Address": "HR1000",
+      "DataType": "Float32",
+      "Length": 60,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "mm"
+    }
+  ]
+}

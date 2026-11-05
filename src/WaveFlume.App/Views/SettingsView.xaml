@@ -1,0 +1,251 @@
+<UserControl x:Class="WaveFlume.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WaveFlume.App.Views">
+    <UserControl.Resources>
+        <Style TargetType="TextBox" x:Key="N" BasedOn="{StaticResource NumberBox}">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="T" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style TargetType="ComboBox" x:Key="C" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+    </UserControl.Resources>
+    <DockPanel Margin="8">
+        <Border DockPanel.Dock="Top" Background="{DynamicResource PanelBg}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="8,4" Margin="0,0,0,8">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Button Content="Sa_ve Settings" Command="{Binding SaveCommand}" Margin="0,0,8,0" MinWidth="110"/>
+                    <Button Content="Re_vert" Command="{Binding RevertCommand}" Margin="0,0,16,0"/>
+                </StackPanel>
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource Muted}" Text="{Binding CeilingText}"/>
+            </DockPanel>
+        </Border>
+
+        <!-- No horizontal scrolling: a star column measured at infinite width collapses the TagMap grid. -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="380"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="430"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Column 1: who can edit, and the paddle limits -->
+                <StackPanel>
+                    
+
+                    <GroupBox Header="Wave Paddle and Limits">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="140"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                                <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Type of Paddle"/>
+                            <ComboBox Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding PaddleTypes}" SelectedItem="{Binding PaddleType}"/>
+                            <Label Grid.Row="1" Content="Hinge Height h0 (m, flap only)"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource N}" Text="{Binding HingeHeightM}"/>
+                            <Label Grid.Row="2" Content="Max Stroke, ± (mm)"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource N}" Text="{Binding MaxStrokeMm}"/>
+                            <Label Grid.Row="3" Content="Max Velocity (m/s)"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource N}" Text="{Binding MaxVelocityMs}"/>
+                            <Label Grid.Row="4" Content="Max Acceleration (m/s², blank = none)"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource N}" Text="{Binding MaxAccelMs2}"/>
+                            <Label Grid.Row="5" Content="Width of Wave Paddle"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Readout}" Margin="0,0,0,4" Text="{Binding PaddleWidthText, Mode=OneWay}"/>
+                            <Label Grid.Row="6" Content="Location of Wave Board (m)"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource N}" Text="{Binding WaveBoardLocationM}"/>
+                            <Label Grid.Row="7" Content="T min (s)"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource N}" Text="{Binding TMinS}"/>
+                            <Label Grid.Row="8" Content="T max (s)"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Style="{StaticResource N}" Text="{Binding TMaxS}"/>
+                            <Label Grid.Row="9" Content="Command Sample Rate (Hz)"/>
+                            <TextBox Grid.Row="9" Grid.Column="1" Style="{StaticResource N}" Text="{Binding CommandFsHz}"/>
+                            <Label Grid.Row="10" Content="Telemetry Rate (Hz)"/>
+                            <TextBox Grid.Row="10" Grid.Column="1" Style="{StaticResource N}" Text="{Binding TelemetryRateHz}"/>
+                            <Label Grid.Row="11" Content="Max Physical Water Depth (m)"/>
+                            <TextBox Grid.Row="11" Grid.Column="1" Style="{StaticResource N}" Text="{Binding MaxWaterDepthM}"/>
+                            <Label Grid.Row="12" Content="Calibration Factor (-)"/>
+                            <TextBox Grid.Row="12" Grid.Column="1" Style="{StaticResource N}" Text="{Binding CalibrationFactor}"/>
+                            <Label Grid.Row="13" Content="Extra Record Duration Default (s)"/>
+                            <TextBox Grid.Row="13" Grid.Column="1" Style="{StaticResource N}" Text="{Binding ExtraRecordS}"/>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+
+                <!-- Column 2: controller connection and the allowed input ranges -->
+                <StackPanel Grid.Column="2">
+                    <GroupBox Header="Controller Connection">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                <Label Content="Protocol"/>
+                                <ComboBox Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding Protocols}" SelectedItem="{Binding Protocol}"/>
+                                <Label Grid.Row="1" Content="IP Address"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource T}" Text="{Binding IpAddress, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="{Binding IpError}"/>
+                                <Label Grid.Row="2" Content="Port"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource N}" Text="{Binding Port}"/>
+                                <Label Grid.Row="3" Content="Transport" Visibility="{Binding UsesTransport, Converter={StaticResource BoolToVis}}"/>
+                                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding Transports}" SelectedItem="{Binding Transport}"
+                                          Visibility="{Binding UsesTransport, Converter={StaticResource BoolToVis}}"/>
+                                <Label Grid.Row="4" Content="Response Timeout (ms)"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource N}" Text="{Binding TimeoutMs}"/>
+                                <Label Grid.Row="5" Content="Retries"/>
+                                <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource N}" Text="{Binding Retries}"/>
+                            </Grid>
+                            <TextBlock Text="{Binding IpError}" Foreground="{DynamicResource Alarm}" FontWeight="SemiBold"
+                                       Visibility="{Binding IpError, Converter={StaticResource NullToCollapsed}}"/>
+
+                            <Grid Visibility="{Binding IsModbus, Converter={StaticResource BoolToVis}}">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Label Content="Modbus Unit ID"/>
+                                <TextBox Grid.Column="1" Style="{StaticResource N}" Text="{Binding ModbusUnitId}"/>
+                            </Grid>
+                            <Grid Visibility="{Binding IsFins, Converter={StaticResource BoolToVis}}">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                <Label Content="FINS Dest. Network"/>
+                                <TextBox Grid.Column="1" Style="{StaticResource N}" Text="{Binding FinsDestNetwork}" ToolTip="Blank = 0 (local network)"/>
+                                <Label Grid.Row="1" Content="FINS Dest. Node"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource N}" Text="{Binding FinsDestNode}" ToolTip="Blank = last octet of the PLC IP"/>
+                                <Label Grid.Row="2" Content="FINS Dest. Unit"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource N}" Text="{Binding FinsDestUnit}" ToolTip="Blank = 0 (CPU)"/>
+                                <Label Grid.Row="3" Content="FINS Source Node"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource N}" Text="{Binding FinsSourceNode}" ToolTip="Blank = last octet of the PC IP (UDP) / auto (TCP)"/>
+                            </Grid>
+                            <Grid Visibility="{Binding IsOpcUa, Converter={StaticResource BoolToVis}}">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                <Label Content="OPC UA Security"/>
+                                <ComboBox Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding OpcSecurityModes}" SelectedItem="{Binding OpcUaSecurity}"/>
+                                <Label Grid.Row="1" Content="User (blank = anonymous)"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource T}" Text="{Binding OpcUaUser}"/>
+                                <Label Grid.Row="2" Content="Password (DPAPI)"/>
+                                <PasswordBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,4" PasswordChanged="OnOpcPasswordChanged"/>
+                            </Grid>
+                            <Grid Visibility="{Binding IsS7, Converter={StaticResource BoolToVis}}">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                <Label Content="S7 Rack"/>
+                                <TextBox Grid.Column="1" Style="{StaticResource N}" Text="{Binding S7Rack}"/>
+                                <Label Grid.Row="1" Content="S7 Slot"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource N}" Text="{Binding S7Slot}"/>
+                            </Grid>
+                            <Grid Visibility="{Binding IsAds, Converter={StaticResource BoolToVis}}">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Label Content="ADS AMS NetID"/>
+                                <TextBox Grid.Column="1" Style="{StaticResource T}" Text="{Binding AdsNetId}"/>
+                            </Grid>
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                                <Label Content="Probe Source (DAQ)"/>
+                                <ComboBox Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding DaqSources}" SelectedItem="{Binding DaqSource}"/>
+                                <Label Grid.Row="1" Content="External DAQ IP"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource T}" Text="{Binding ExternalDaqIp}"/>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Test Connection">
+                        <StackPanel>
+                            <Button Content="_Test Connection" Command="{Binding TestConnectionCommand}" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding TestResult}" TextWrapping="Wrap" FontFamily="{StaticResource NumericFont}" Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding NetworkHintText}" TextWrapping="Wrap" Style="{StaticResource Muted}"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Range Bounds (min - max)">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="80"/><ColumnDefinition Width="6"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <Label Content="Water Depth (m)"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource N}" Text="{Binding DepthMin}"/>
+                            <TextBox Grid.Column="3" Style="{StaticResource N}" Text="{Binding DepthMax}"/>
+                            <Label Grid.Row="1" Content="Wave Height (m)"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource N}" Text="{Binding HeightMin}"/>
+                            <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource N}" Text="{Binding HeightMax}"/>
+                            <Label Grid.Row="2" Content="Wave Period (s)"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource N}" Text="{Binding PeriodMin}"/>
+                            <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource N}" Text="{Binding PeriodMax}"/>
+                            <Label Grid.Row="3" Content="Number of Waves"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource N}" Text="{Binding WavesMin}"/>
+                            <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource N}" Text="{Binding WavesMax}"/>
+                            <Label Grid.Row="4" Content="Sampling Frequency (Hz)"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource N}" Text="{Binding FsMin}"/>
+                            <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource N}" Text="{Binding FsMax}"/>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+
+                <!-- Column 3: display and the probe calibration -->
+                <StackPanel Grid.Column="4">
+                    <GroupBox Header="Display and Paths">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <Label Content="Theme"/>
+                            <ComboBox Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding Themes}" SelectedItem="{Binding Theme}"/>
+                            <CheckBox Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,4" Content="Oscilloscope plot style (black / yellow)" IsChecked="{Binding OscilloscopePlots}"/>
+                            <Label Grid.Row="2" Content="Data Directory"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource T}" Text="{Binding DataDirectory}"/>
+                        </Grid>
+                    </GroupBox>
+                    <local:CalibrationView DataContext="{Binding CalibrationContext, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                </StackPanel>
+
+                <!-- Full-width row: the TagMap table needs the room -->
+                <GroupBox Grid.Row="1" Grid.ColumnSpan="5" Header="TagMap (logical signal to PLC address)" VerticalAlignment="Top">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition/><ColumnDefinition Width="110"/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <Label Content="Profile"/>
+                            <ComboBox Grid.Column="1" Style="{StaticResource C}" ItemsSource="{Binding Profiles}" SelectedItem="{Binding TagMapProfile}"/>
+                            <Label Grid.Column="2" Content="  Word Order"/>
+                            <ComboBox Grid.Column="3" Style="{StaticResource C}" ItemsSource="{Binding WordOrders}" SelectedItem="{Binding WordOrder}"/>
+                            <Label Grid.Row="1" Content="Profile Name"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Style="{StaticResource T}" Text="{Binding TagMapName}"/>
+                        </Grid>
+                        <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,4" TextWrapping="Wrap"
+                                   Visibility="{Binding UsesTagMap, Converter={StaticResource BoolToVis}, ConverterParameter=x}"
+                                   Text="Edit rows, then Validate. Connect is disabled while the TagMap fails validation."/>
+                        <DataGrid ItemsSource="{Binding TagRows}" Height="320" CanUserSortColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Logical Signal" Binding="{Binding Signal}" Width="140"/>
+                                <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="*"/>
+                                <DataGridComboBoxColumn Header="Type" SelectedItemBinding="{Binding DataType}" Width="80"
+                                                        ItemsSource="{Binding DataContext.DataTypes, Source={x:Reference TagRoot}}"/>
+                                <DataGridTextColumn Header="Len" Binding="{Binding Length}" Width="50"/>
+                                <DataGridTextColumn Header="Scale" Binding="{Binding Scale}" Width="60"/>
+                                <DataGridTextColumn Header="Offset" Binding="{Binding Offset}" Width="60"/>
+                                <DataGridComboBoxColumn Header="R/W" SelectedItemBinding="{Binding Access}" Width="60"
+                                                        ItemsSource="{Binding DataContext.Accesses, Source={x:Reference TagRoot}}"/>
+                                <DataGridTextColumn Header="Units" Binding="{Binding Units}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+                            <Button Content="Validate _all tags" Command="{Binding ValidateTagsCommand}" Margin="0,0,4,0"/>
+                            <Button Content="_Import JSON..." Command="{Binding ImportTagsCommand}" Margin="0,0,4,0"/>
+                            <Button Content="E_xport JSON..." Command="{Binding ExportTagsCommand}"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding TagMapStatus}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </GroupBox>
+                <FrameworkElement x:Name="TagRoot" Visibility="Collapsed"/>
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

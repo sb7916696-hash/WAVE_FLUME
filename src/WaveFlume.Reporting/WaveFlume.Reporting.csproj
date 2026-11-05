@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\WaveFlume.Core\WaveFlume.Core.csproj" />
+    <ProjectReference Include="..\WaveFlume.Physics\WaveFlume.Physics.csproj" />
+    <ProjectReference Include="..\WaveFlume.Data\WaveFlume.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QuestPDF" Version="2024.12.3" />
+    <PackageReference Include="ScottPlot" Version="5.0.56" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\WaveFlume.Core\WaveFlume.Core.csproj" />
+    <ProjectReference Include="..\WaveFlume.Physics\WaveFlume.Physics.csproj" />
+    <ProjectReference Include="..\WaveFlume.Plc\WaveFlume.Plc.csproj" />
+    <ProjectReference Include="..\WaveFlume.Data\WaveFlume.Data.csproj" />
+    <ProjectReference Include="..\WaveFlume.Reporting\WaveFlume.Reporting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="ScottPlot.WPF" Version="5.0.56" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>WaveFlume</AssemblyName>
+    <Version>1.0.0</Version>
+    <Product>Wave Flume</Product>
+    <AssemblyTitle>Wave Flume</AssemblyTitle>
+    <Description>Wave Flume - wavemaker control</Description>
+    <ApplicationIcon>Assets\WaveFlume.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\WaveFlume.png" />
+    <Resource Include="Assets\WaveFlume-128.png" />
+    <Resource Include="Assets\WaveFlume.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\config\**\*.json" LinkBase="config" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\config\**\*.txt" LinkBase="config" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\docs\Wave_Flume_User_Manual.pdf" Link="docs\Wave_Flume_User_Manual.pdf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Condition="Exists('..\..\docs\Wave_Flume_User_Manual.pdf')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WaveFlume.App.Tests" />
+  </ItemGroup>
+
+</Project>

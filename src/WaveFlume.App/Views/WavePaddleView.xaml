@@ -1,0 +1,162 @@
+<UserControl x:Class="WaveFlume.App.Views.WavePaddleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sp="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Run control -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="Run">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="90"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <Label Content="Loaded Test Number"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource Readout}" TextAlignment="Left" Margin="0,0,0,4" Text="{Binding SentTestNumber, Mode=OneWay}"/>
+                        <Label Grid.Row="1" Content="Extra Duration to Record (s)"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource NumberBox}" Margin="0,0,0,4" Text="{Binding ExtraRecordS}"/>
+                        <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Content="DAQ / probe stream" IsChecked="{Binding DaqStream}"/>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Controller">
+                    <StackPanel>
+                        <Button Content="{Binding ConnectLabel}" Command="{Binding ConnectCommand}" Margin="0,0,0,4"/>
+                        <Button Content="_Enable Servos" Command="{Binding EnableServosCommand}" Margin="0,0,0,4"/>
+                        <Button Content="Starting Positi_on" Command="{Binding HomeCommand}" ToolTip="Moves the paddles to their starting (zero) position. Needed once after the servos are switched on." Margin="0,0,0,4"/>
+                        <Button Content="Send to Wave _Paddle" Command="{Binding SendCommand}" Margin="0,0,0,4"
+                                ToolTip="Needs a calculated, safety-approved wave on the Wave Generation tab."/>
+                        <ProgressBar Height="8" Margin="0,0,0,8" Value="{Binding UploadProgress}" Foreground="{DynamicResource Selection}"/>
+                        <Button Style="{StaticResource BigButton}" Content="_Start Wave" Command="{Binding StartCommand}" Margin="0,0,0,4"/>
+                        <Button Style="{StaticResource BigButton}" Content="Smoo_th Stop" Command="{Binding SmoothStopCommand}" Margin="0,0,0,8"/>
+                        <Button Style="{StaticResource EStopButton}" Content="EMERGENCY STOP" Command="{Binding EStopCommand}" Margin="0,0,0,8"/>
+                        <Button Content="Reset _Fault" Command="{Binding ResetCommand}" Margin="0,0,0,4"/>
+                        <Button Content="Save Test _Data" Command="{Binding SaveTestDataCommand}" Margin="0,0,0,4"/>
+                        <Button Content="PDF Report" Command="{Binding ReportCommand}" Margin="0,0,0,4"
+                                ToolTip="Report for the opened test data file, or else the last run. Runs also get a report automatically."/>
+                        <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Paddles + statistics -->
+        <StackPanel Grid.Column="2">
+            <GroupBox Header="Paddle Positions (mm)">
+                <ItemsControl ItemsSource="{Binding Paddles}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="72"/>
+                                    <ColumnDefinition Width="44"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                <ProgressBar Grid.Column="1" Height="16" Maximum="100" Value="{Binding Percent, Mode=OneWay}">
+                                    <ProgressBar.Style>
+                                        <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
+                                            <Setter Property="Foreground" Value="{DynamicResource TextMuted}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Level}" Value="Warning">
+                                                    <Setter Property="Foreground" Value="{DynamicResource Warning}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Level}" Value="Alarm">
+                                                    <Setter Property="Foreground" Value="{DynamicResource Alarm}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ProgressBar.Style>
+                                </ProgressBar>
+                                <TextBlock Grid.Column="2" TextAlignment="Right" VerticalAlignment="Center" FontFamily="{StaticResource NumericFont}"
+                                           Text="{Binding Mm, StringFormat={}{0:+0.0;-0.0;0.0}}"/>
+                                <TextBlock Grid.Column="3" TextAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value=""/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Level}" Value="Warning"><Setter Property="Text" Value="WARN"/></DataTrigger>
+                                                <DataTrigger Binding="{Binding Level}" Value="Alarm"><Setter Property="Text" Value="ALARM"/></DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </GroupBox>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,-4,0,8" TextWrapping="Wrap"
+                       Text="Bar = |position| / stroke clamp. WARN at 80 %, ALARM at 95 % (runtime guard Smooth Stops)."/>
+
+            <GroupBox Header="Statistical Parameters">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,4">
+                        <Label Content="Probe Channel"/>
+                        <ComboBox x:Name="StatsChannelBox" SelectedIndex="{Binding StatsChannel}"/>
+                    </DockPanel>
+                    <DataGrid ItemsSource="{Binding Stats}" IsReadOnly="True" FontFamily="{StaticResource NumericFont}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Parameter" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Live (60 s)" Binding="{Binding Live}" Width="80"/>
+                            <DataGridTextColumn Header="Final" Binding="{Binding Final}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <!-- Live plots -->
+        <DockPanel Grid.Column="4">
+            <Border DockPanel.Dock="Top" Background="{DynamicResource PanelBg}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6,3" Margin="0,0,0,4">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Open Test Data..." Command="{Binding OpenTestDataCommand}" Margin="0,0,4,0"/>
+                    <Button Content="Back to Live" Command="{Binding ShowLiveCommand}" Margin="0,0,12,0"/>
+                    <Label Content="Show"/>
+                    <ComboBox x:Name="ShowBox" Width="110" Margin="0,0,12,0" SelectedIndex="0">
+                        <ComboBoxItem Content="Time Series"/>
+                        <ComboBoxItem Content="Spectrum"/>
+                    </ComboBox>
+                    <Label Content="Window (s)"/>
+                    <ComboBox x:Name="WindowBox" Width="60" Margin="0,0,12,0" SelectedIndex="1">
+                        <ComboBoxItem Content="10"/>
+                        <ComboBoxItem Content="30"/>
+                        <ComboBoxItem Content="60"/>
+                    </ComboBox>
+                    <CheckBox x:Name="PauseBox" Content="Pause / freeze" Margin="0,0,12,0"/>
+                    <TextBlock x:Name="FpsText" VerticalAlignment="Center" Style="{StaticResource Muted}" FontFamily="{StaticResource NumericFont}"/>
+                </StackPanel>
+            </Border>
+            <TabControl x:Name="PlotTabs">
+                <TabItem Header="Real Time Board Motion">
+                    <sp:WpfPlot x:Name="BoardPlot"/>
+                </TabItem>
+                <TabItem Header="Plot Wave Probe Data">
+                    <Grid>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <DockPanel>
+                            <ComboBox x:Name="Ch1" DockPanel.Dock="Left" Width="70" VerticalAlignment="Top" Margin="0,4,4,0"/>
+                            <sp:WpfPlot x:Name="Probe1"/>
+                        </DockPanel>
+                        <DockPanel Grid.Row="1">
+                            <ComboBox x:Name="Ch2" DockPanel.Dock="Left" Width="70" VerticalAlignment="Top" Margin="0,4,4,0"/>
+                            <sp:WpfPlot x:Name="Probe2"/>
+                        </DockPanel>
+                        <DockPanel Grid.Row="2">
+                            <ComboBox x:Name="Ch3" DockPanel.Dock="Left" Width="70" VerticalAlignment="Top" Margin="0,4,4,0"/>
+                            <sp:WpfPlot x:Name="Probe3"/>
+                        </DockPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Grid>
+</UserControl>

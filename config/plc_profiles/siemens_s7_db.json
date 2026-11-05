@@ -1,0 +1,197 @@
+{
+  "Name": "Siemens S7-1500 - DB10",
+  "Protocol": "S7",
+  "WordOrder": "ABCD",
+  "Tags": [
+    {
+      "Signal": "CmdWord",
+      "Address": "DB10.DBW0",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "HeartbeatPc",
+      "Address": "DB10.DBW2",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "Period_s",
+      "Address": "DB10.DBD4",
+      "DataType": "Float32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "s"
+    },
+    {
+      "Signal": "Ramp_s",
+      "Address": "DB10.DBD8",
+      "DataType": "Float32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "s"
+    },
+    {
+      "Signal": "Cycles",
+      "Address": "DB10.DBD12",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "waves | samples (trajectory mode)"
+    },
+    {
+      "Signal": "Amp_mm",
+      "Address": "DB10.DBD16",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "mm"
+    },
+    {
+      "Signal": "Phase_deg",
+      "Address": "DB10.DBD40",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "deg"
+    },
+    {
+      "Signal": "ChunkSeq",
+      "Address": "DB10.DBW80",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkReady",
+      "Address": "DB10.DBX82.0",
+      "DataType": "Bool",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkCrc",
+      "Address": "DB10.DBW84",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": ""
+    },
+    {
+      "Signal": "ChunkAck",
+      "Address": "DB10.DBW86",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "BufferLevel",
+      "Address": "DB10.DBD88",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "free samples"
+    },
+    {
+      "Signal": "Pos_mm",
+      "Address": "DB10.DBD200",
+      "DataType": "Float32",
+      "Length": 6,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "mm"
+    },
+    {
+      "Signal": "Probe_m",
+      "Address": "DB10.DBD400",
+      "DataType": "Float32",
+      "Length": 8,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "mA (loop current; calibrated to m in the app)"
+    },
+    {
+      "Signal": "StatusWord",
+      "Address": "DB10.DBW440",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "FaultWord",
+      "Address": "DB10.DBW442",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "Heartbeat",
+      "Address": "DB10.DBW444",
+      "DataType": "UInt16",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": ""
+    },
+    {
+      "Signal": "SampleCounter",
+      "Address": "DB10.DBD448",
+      "DataType": "Int32",
+      "Length": 1,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "R",
+      "Units": "samples"
+    },
+    {
+      "Signal": "TrajChunk",
+      "Address": "DB10.DBD2000",
+      "DataType": "Float32",
+      "Length": 60,
+      "Scale": 1.0,
+      "Offset": 0.0,
+      "Access": "W",
+      "Units": "mm"
+    }
+  ]
+}

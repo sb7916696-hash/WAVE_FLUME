@@ -1,0 +1,41 @@
+<UserControl x:Class="WaveFlume.App.Views.CalibrationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <GroupBox Header="Channels and Calibrations (probe 4-20 mA)">
+        <StackPanel>
+            <DataGrid ItemsSource="{Binding Rows}" IsReadOnly="True" Margin="0,0,0,6" FontFamily="{StaticResource NumericFont}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Channel" Binding="{Binding Channel}" Width="80"/>
+                    <DataGridTextColumn Header="Gain (m/mA)" Binding="{Binding Gain}" Width="*"/>
+                    <DataGridTextColumn Header="Offset (m)" Binding="{Binding Offset}" Width="*"/>
+                    <DataGridTextColumn Header="R²" Binding="{Binding RSquared}" Width="80"/>
+                    <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="90"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <!-- A wrapping row, so the Capture button drops to the next line instead of being cut off in a narrow window. -->
+            <WrapPanel Margin="0,0,0,4">
+                <Label Content="Channel" Margin="0,0,0,4"/>
+                <ComboBox Width="110" Margin="0,0,0,4" ItemsSource="{Binding Channels}" SelectedIndex="{Binding Channel}"/>
+                <Label Content="  Known elevation (m)" Margin="0,0,0,4"/>
+                <TextBox Width="90" Margin="0,0,8,4" Style="{StaticResource NumberBox}" Text="{Binding KnownM}"/>
+                <Button Margin="0,0,0,4" Content="_Capture point (2 s avg)" Command="{Binding CaptureCommand}"/>
+            </WrapPanel>
+            <DataGrid ItemsSource="{Binding Points}" SelectedItem="{Binding SelectedPoint}" IsReadOnly="True" Height="100" FontFamily="{StaticResource NumericFont}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Raw (mA)" Binding="{Binding RawMa, StringFormat=0.0000}" Width="*"/>
+                    <DataGridTextColumn Header="Known (m)" Binding="{Binding KnownM, StringFormat=0.0000}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <WrapPanel Margin="0,4,0,4">
+                <Button Content="Remove point" Command="{Binding RemovePointCommand}" Margin="0,0,4,4"/>
+                <Button Content="Clear" Command="{Binding ClearPointsCommand}" Margin="0,0,4,4"/>
+                <Button Content="_Fit" Command="{Binding FitCommand}" Margin="0,0,4,4"/>
+                <Button Content="Save calibration" Command="{Binding SaveCommand}" Margin="0,0,4,4"/>
+                <Button Content="Reset to nominal" Command="{Binding ResetToNominalCommand}" Margin="0,0,4,4"/>
+            </WrapPanel>
+            <TextBlock Text="{Binding FitText}" TextWrapping="Wrap" FontFamily="{StaticResource NumericFont}"/>
+            <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0"
+                       Text="Probe_m in the TagMap carries loop current (mA). Below 3.8 mA or above 20.5 mA is a loop fault: Critical alarm + Smooth Stop."/>
+        </StackPanel>
+    </GroupBox>
+</UserControl>

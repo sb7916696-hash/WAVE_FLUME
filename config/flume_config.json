@@ -1,0 +1,49 @@
+{
+  // Physical flume (spec §3). SI units throughout.
+  "FlumeWidthM": 3.0,
+  "FlumeLengthM": 45.0,
+  "NumPaddles": 6,
+  "PaddleWidthM": 0.5,
+  "MaxWaterDepthM": 0.8,
+  "Gravity": 9.81,
+  "WaterDensity": 1000.0,
+  "PaddleType": "Piston",
+  "HingeHeightM": 0.0,
+
+  "Drive": {
+    "GearRatio": 20.0,
+    "PinionModuleMm": 4.0,
+    "PinionTeeth": 25,
+    "EncoderCountsPerRev": null
+  },
+
+  "Limits": {
+    "MaxStrokeM": 0.35,
+    "MaxVelocityMs": 1.57,
+    "MaxAccelMs2": null,
+    "TMinS": 0.6,
+    "TMaxS": 6.0,
+    "CommandFsHz": 125.0,
+    "TelemetryRateHz": 125.0
+  },
+
+  "Irregular": {
+    "BandLowFactor": 0.4,
+    "BandHighFactor": 4.0,
+    "WarnSamplesPerPaddle": 2000000
+  },
+
+  "Probes": {
+    "ActiveCount": 3,
+    "NominalMinM": -0.25,
+    "NominalMaxM": 0.25
+  },
+
+  "Ranges": {
+    "WaterDepthM": { "Min": 0.2,  "Max": 1.0 },
+    "WaveHeightM": { "Min": 0.01, "Max": 0.30 },
+    "PeriodS":     { "Min": 0.5,  "Max": 6.0 },
+    "NumWaves":    { "Min": 10,   "Max": 10000 },
+    "SamplingHz":  { "Min": 50,   "Max": 200 }
+  }
+}

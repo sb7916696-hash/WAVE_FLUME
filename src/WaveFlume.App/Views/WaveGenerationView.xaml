@@ -1,0 +1,287 @@
+<UserControl x:Class="WaveFlume.App.Views.WaveGenerationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sp="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF">
+    <UserControl.Resources>
+        <Style TargetType="TextBox" x:Key="In" BasedOn="{StaticResource NumberBox}">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="Out" BasedOn="{StaticResource Readout}">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="Width" Value="110"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="380"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Inputs. Calculate and Reset stay in view above the scrolling list, whatever wave type is chosen. -->
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+                <Button Content="_Calculate" Command="{Binding CalculateCommand}" Margin="0,0,8,0" MinWidth="110" MinHeight="30" FontWeight="SemiBold"/>
+                <Button Content="_Reset" Command="{Binding ResetCommand}" MinHeight="30"/>
+            </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="Wave Order">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" IsEnabled="{Binding OrderAvailable}">
+                            <RadioButton GroupName="order" Content="_1st order" IsChecked="{Binding IsFirstOrder}"/>
+                            <RadioButton GroupName="order" Content="_2nd order" IsChecked="{Binding IsFirstOrder, Converter={StaticResource Not}}"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   Visibility="{Binding IsRandom, Converter={StaticResource BoolToVis}}"
+                                   Text="Random waves are always 1st order."/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Wave Type">
+                    <ComboBox ItemsSource="{Binding WaveTypes}" SelectedItem="{Binding Type}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate><TextBlock Text="{Binding Converter={StaticResource EnumLabel}}"/></DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </GroupBox>
+
+                <GroupBox Header="Wave Parameters">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="110"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Content="{Binding DepthLabel}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource In}" Text="{Binding WaterDepthM}"/>
+                        <Label Grid.Row="1" Content="{Binding HeightLabel}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource In}" Text="{Binding WaveHeightM}" IsEnabled="{Binding HeightAvailable}"/>
+                        <Label Grid.Row="2" Content="{Binding PeriodLabel}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource In}" Text="{Binding PeriodS}" IsEnabled="{Binding PeriodAvailable}"/>
+                        <Label Grid.Row="3" Content="Number of Waves"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource In}" Text="{Binding NumWaves}" IsEnabled="{Binding NumWavesAvailable}"/>
+                        <Label Grid.Row="4" Content="Sampling Frequency (Hz)"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource In}" Text="{Binding SamplingHz}"/>
+                        <Label Grid.Row="5" Content="% Signal Modification (%)"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource In}" Text="{Binding SignalModPct}"/>
+                        <Label Grid.Row="6" Content="Ramp Duration (s)"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource In}" Text="{Binding RampS}" IsEnabled="{Binding RampAvailable}"/>
+                        <Label Grid.Row="7" Content="Wave Angle (deg)"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource In}" Text="{Binding AngleDeg}" IsEnabled="{Binding AngleAvailable}"/>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Bichromatic - second component" Visibility="{Binding IsBichromatic, Converter={StaticResource BoolToVis}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="110"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <Label Content="Wave Height H2 (m)"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource In}" Text="{Binding Height2M}"/>
+                        <Label Grid.Row="1" Content="Wave Period T2 (s)"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource In}" Text="{Binding Period2S}"/>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Spectrum" Visibility="{Binding IsSpectral, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <Label Content="Spectral Shape"/>
+                            <ComboBox Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding SpectralShapes}" SelectedItem="{Binding Spectrum}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate><TextBlock Text="{Binding Converter={StaticResource EnumLabel}}"/></DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Label Grid.Row="1" Content="Peak Enhancement Gamma (-)" Visibility="{Binding ShowGamma, Converter={StaticResource BoolToVis}}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource In}" Text="{Binding Gamma}"
+                                     Visibility="{Binding ShowGamma, Converter={StaticResource BoolToVis}}"/>
+                            <Label Grid.Row="2" Content="Generalised PM Beta (-)" Visibility="{Binding ShowBeta, Converter={StaticResource BoolToVis}}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource In}" Text="{Binding Beta}"
+                                     Visibility="{Binding ShowBeta, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
+                        <Grid Visibility="{Binding IsRandom, Converter={StaticResource BoolToVis}}">
+                            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            <Label Content="Random Seed"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource In}" Text="{Binding RandomSeed}"/>
+                            <Label Grid.Row="1" Content="Synthesis Path"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding RandomPaths}" SelectedItem="{Binding Path}"
+                                      ToolTip="A builds the paddle motion straight from the spectrum; B builds the wave surface first and then converts it. Both give the same motion.">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate><TextBlock Text="{Binding Converter={StaticResource EnumLabel}}"/></DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <CheckBox Grid.Row="2" Grid.ColumnSpan="2" Content="Scale realisation to target Hs" IsChecked="{Binding ScaleToTargetHs}"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="User-defined input file" Visibility="{Binding IsUserDefined, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,4">
+                            <Button DockPanel.Dock="Right" Content="_Browse..." Command="{Binding BrowseUserFileCommand}" Margin="4,0,0,0"/>
+                            <TextBox Text="{Binding UserFilePath}"/>
+                        </DockPanel>
+                        <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
+                                   Text="CSV: time_s, value_m. User wave: one column of surface elevation. User stroke: one column (all paddles) or one per paddle; used directly, still safety-checked."/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Focusing" Visibility="{Binding IsFocusing, Converter={StaticResource BoolToVis}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="110"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <Label Content="Focus Position x_f (m)"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource In}" Text="{Binding FocusXM}"/>
+                        <Label Grid.Row="1" Content="Focus Time t_f (s)"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource In}" Text="{Binding FocusTimeS}"/>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Recipe">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <Label Content="Test Number"/>
+                        <TextBox Grid.Column="1" Margin="0,0,0,4" Text="{Binding TestNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Row="1" Content="Saved Recipes"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,4" ItemsSource="{Binding Recipes}" SelectedItem="{Binding SelectedRecipe}"
+                                  DisplayMemberPath="TestNumber"/>
+                        <WrapPanel Grid.Row="2" Grid.ColumnSpan="2">
+                            <Button Content="Sa_ve" Command="{Binding SaveCommand}" Margin="0,0,4,4" ToolTip="Insert under the test number above (must be new)."/>
+                            <Button Content="A_dd" Command="{Binding AddCommand}" Margin="0,0,4,4" ToolTip="Insert under the next free test number."/>
+                            <Button Content="_Update" Command="{Binding UpdateCommand}" Margin="0,0,4,4" ToolTip="Overwrite the recipe with this test number."/>
+                            <Button Content="_Load Prev Wavegen" Command="{Binding LoadRecipeCommand}" Margin="0,0,4,4" ToolTip="Load the selected recipe's inputs."/>
+                            <Button Content="_New" Command="{Binding NewCommand}" Margin="0,0,4,4"/>
+                            <Button Content="Delete" Command="{Binding DeleteRecipeCommand}" Margin="0,0,4,4"/>
+                        </WrapPanel>
+                        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource Muted}" TextWrapping="Wrap"
+                                   Text="Recipes are saved in recipes.json in the data directory."/>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+        </DockPanel>
+
+        <!-- Outputs + plots -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <GroupBox Header="Wavemaker Parameters" Margin="0,0,8,8">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="210"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <Label Content="Transfer Function c0 = H/S0 (-)"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Wavemaker.C0, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="1" Content="Stroke Amplitude (m)"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Wavemaker.StrokeAmplitudeM, StringFormat=0.00000, Mode=OneWay}"/>
+                        <Label Grid.Row="2" Content="Stroke Peak-to-Peak (m)"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Wavemaker.StrokePeakToPeakM, StringFormat=0.00000, Mode=OneWay}"/>
+                        <Label Grid.Row="3" Content="Velocity (m/s)"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Wavemaker.PeakVelocityMs, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="4" Content="Acceleration (m/s²)"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Wavemaker.PeakAccelMs2, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="5" Content="Force (kN, estimate)" ToolTip="Linear dynamic force over the flume width; excludes hydrostatic and evanescent terms. [VERIFY]"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding ForceKn, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="6" Content="Power (W)"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Wavemaker.PowerW, StringFormat=0.00, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Column="1" Header="Wave Kinematics" Margin="0,0,8,8">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                        <Label Content="Wave Length (m)"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Kinematics.WaveLengthM, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="1" Content="Celerity (m/s)"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Kinematics.CelerityMs, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="2" Content="Max Velocity u = πH/T (m/s)"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Kinematics.UMaxMs, StringFormat=0.00000, Mode=OneWay}"
+                                 ToolTip="{Binding Result.Kinematics.UMaxExactMs, StringFormat='Exact orbital surface velocity (x coth kh): {0:0.00000} m/s'}"/>
+                        <Label Grid.Row="3" Content="Wave Number k (rad/m)"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Kinematics.K, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="4" Content="kh (-)"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Kinematics.Kh, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="5" Content="Group Velocity (m/s)"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Out}" Text="{Binding Result.Kinematics.GroupVelocityMs, StringFormat=0.0000, Mode=OneWay}"/>
+                        <Label Grid.Row="6" Content="Depth Regime"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource Out}" TextAlignment="Left" Text="{Binding Result.Kinematics.Regime, Mode=OneWay}"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Column="2" Header="Safety Gatekeeper" Margin="0,0,0,8">
+                    <StackPanel>
+                        <Border Padding="6,4" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource ReadOnlyBg}"/>
+                                    <Setter Property="TextElement.Foreground" Value="{DynamicResource Text}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SafetyLevel}" Value="Alarm">
+                                            <Setter Property="Background" Value="{DynamicResource Alarm}"/>
+                                            <Setter Property="TextElement.Foreground" Value="{DynamicResource AlarmText}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SafetyLevel}" Value="Warning">
+                                            <Setter Property="Background" Value="{DynamicResource Warning}"/>
+                                            <Setter Property="TextElement.Foreground" Value="{DynamicResource WarningText}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SafetyLevel}" Value="Ok">
+                                            <Setter Property="Background" Value="{DynamicResource Ok}"/>
+                                            <Setter Property="TextElement.Foreground" Value="{DynamicResource OkText}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding SafetyText}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding Warnings}" Margin="0,4,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Text="{Binding StringFormat='Warning: {0}'}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl ItemsSource="{Binding Info}" Margin="0,2,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,2" Style="{StaticResource Muted}" Text="{Binding StringFormat='Info: {0}'}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </GroupBox>
+            </Grid>
+
+            <TextBlock Grid.Row="1" Margin="0,0,0,4" x:Name="LimitHover" Style="{StaticResource Muted}"
+                       Text="Limit: hover the curve to see the active limit. Scroll to zoom, drag to pan, double-click to reset."/>
+
+            <TabControl Grid.Row="2" x:Name="GenPlotTabs">
+                <TabItem Header="Limit">
+                    <sp:WpfPlot x:Name="LimitPlot"/>
+                </TabItem>
+                <TabItem Header="Wave Board">
+                    <sp:WpfPlot x:Name="BoardPlot"/>
+                </TabItem>
+                <TabItem Header="Wave Elevation">
+                    <sp:WpfPlot x:Name="ElevationPlot"/>
+                </TabItem>
+                <TabItem Header="Spectrum">
+                    <sp:WpfPlot x:Name="SpectrumPlot"/>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</UserControl>

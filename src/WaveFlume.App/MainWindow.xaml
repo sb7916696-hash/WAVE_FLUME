@@ -1,0 +1,131 @@
+﻿<Window x:Class="WaveFlume.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:WaveFlume.App.Views"
+        Title="Wave Flume" Icon="Assets/WaveFlume.ico"
+        Width="1600" Height="980" MinWidth="1280" MinHeight="800"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Background="{DynamicResource WindowBg}" Foreground="{DynamicResource Text}"
+        FontFamily="Segoe UI" FontSize="12"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display">
+    <DockPanel>
+        <!-- Header: title, E-STOP always visible on every tab -->
+        <Border DockPanel.Dock="Top" Background="{DynamicResource PanelBg}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8,4">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource EStopButton}" MinHeight="40" Width="180"
+                        Content="EMERGENCY STOP" Command="{Binding WavePaddle.EStopCommand}"
+                        ToolTip="Software E-stop request. The hardwired E-stop chain is the primary stop."/>
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <Image Source="Assets/WaveFlume-128.png" Width="36" Height="36" Margin="0,0,10,0"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="Wave Flume" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Alarm banner: highest-priority unacknowledged alarm; colour + text cue -->
+        <Border DockPanel.Dock="Top" Padding="8,4" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource BorderBrush}"
+                Visibility="{Binding Alarms.Banner, Converter={StaticResource NullToCollapsed}}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{DynamicResource Warning}"/>
+                    <Setter Property="TextElement.Foreground" Value="{DynamicResource WarningText}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Alarms.Banner.Severity}" Value="Critical">
+                            <Setter Property="Background" Value="{DynamicResource Alarm}"/>
+                            <Setter Property="TextElement.Foreground" Value="{DynamicResource AlarmText}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Alarms.Banner.Severity}" Value="EStop">
+                            <Setter Property="Background" Value="{DynamicResource Alarm}"/>
+                            <Setter Property="TextElement.Foreground" Value="{DynamicResource AlarmText}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="_Details" Command="{Binding ShowBannerDetailsCommand}" Margin="8,0,0,0"
+                        ToolTip="Shows what the problem is and what to do about it."/>
+                <TextBlock VerticalAlignment="Center" FontWeight="SemiBold">
+                    <Run Text="{Binding Alarms.Banner.Priority, Mode=OneWay}"/>
+                    <Run Text="  "/>
+                    <Run Text="{Binding Alarms.Banner.Time, Mode=OneWay}"/>
+                    <Run Text="  "/>
+                    <Run Text="{Binding Alarms.Banner.Source, Mode=OneWay}"/>
+                    <Run Text=": "/>
+                    <Run Text="{Binding Alarms.Banner.Description, Mode=OneWay}"/>
+                    <Run Text="{Binding Alarms.ActiveCount, StringFormat='   ({0} unacknowledged)', Mode=OneWay}"/>
+                </TextBlock>
+            </DockPanel>
+        </Border>
+
+        <!-- Permanent status bar -->
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource PanelBg}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0">
+            <Border.Resources>
+                <Style TargetType="Border" x:Key="Cell">
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                    <Setter Property="Padding" Value="8,3"/>
+                </Style>
+            </Border.Resources>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Margin="8,3" FontFamily="{StaticResource NumericFont}" Text="{Binding Clock}"/>
+                <StackPanel Orientation="Horizontal">
+                    <Border Style="{StaticResource Cell}"><TextBlock Text="{Binding Session.ControllerText}"/></Border>
+                    <Border Style="{StaticResource Cell}"><TextBlock Text="{Binding Session.ServoText}"/></Border>
+                    <Border Style="{StaticResource Cell}"><TextBlock Text="{Binding RunStateText}"/></Border>
+                    <Border Style="{StaticResource Cell}">
+                        <TextBlock Text="{Binding Alarms.ActiveCount, StringFormat='Alarms: {0}'}"/>
+                    </Border>
+                    <Border Style="{StaticResource Cell}" Background="{DynamicResource Warning}"
+                            Visibility="{Binding AccelText, Converter={StaticResource NullToCollapsed}}">
+                        <TextBlock Foreground="{DynamicResource WarningText}" FontWeight="SemiBold" Text="{Binding AccelText, StringFormat='WARNING: {0}'}"/>
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Alarm / event log (ISA-18.2 style) -->
+        <Expander DockPanel.Dock="Bottom" Margin="4,0,4,2" IsExpanded="False">
+            <Expander.Header>
+                <TextBlock Text="{Binding Alarms.Log.Count, StringFormat='Alarm / event log ({0})'}"/>
+            </Expander.Header>
+            <DockPanel Height="150">
+                <StackPanel DockPanel.Dock="Right" VerticalAlignment="Top" Margin="4,0,0,0">
+                    <Button Content="De_tails" Margin="0,0,0,4" Command="{Binding ShowAlarmDetailsCommand}"
+                            CommandParameter="{Binding SelectedItem, ElementName=AlarmGrid}"
+                            ToolTip="Select a row, then press Details to see the problem and solution."/>
+                    <Button Content="Ack a_ll" Command="{Binding AcknowledgeAllCommand}"/>
+                </StackPanel>
+                <DataGrid x:Name="AlarmGrid" ItemsSource="{Binding Alarms.Log}" IsReadOnly="True" SelectionMode="Single">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                            <EventSetter Event="MouseDoubleClick" Handler="OnAlarmRowDoubleClick"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="90"/>
+                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="170"/>
+                        <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="120"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                        <DataGridTextColumn Header="Ack" Binding="{Binding AckText}" Width="70"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Expander>
+
+        <TabControl x:Name="MainTabs" Margin="4,4,4,4">
+            <TabItem Header="_Wave Generation">
+                <views:WaveGenerationView DataContext="{Binding WaveGeneration}"/>
+            </TabItem>
+            <TabItem Header="Wave _Paddle">
+                <views:WavePaddleView DataContext="{Binding WavePaddle}"/>
+            </TabItem>
+            <TabItem Header="_Settings">
+                <views:SettingsView DataContext="{Binding Settings}" CalibrationContext="{Binding DataContext.Calibration, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            </TabItem>
+            <TabItem Header="_Help">
+                <views:HelpView/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
